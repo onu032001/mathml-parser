@@ -2,10 +2,9 @@
  * Parses MathML Element.
  * @param {MathMLElement} mmlElem MathML element parsed using MathML.
  */
-function MathMLElementToJS(mmlElem, parent = "") {
+function MathMLElementToJS(mmlElem, contin = false) {
   let result = '';
   const structElem = ['math', 'mrow', 'msqrt'];
-  const textElem = ['mn', 'mo', 'mi'];
   /**
    * Snippet to JavaScript.
    * @param {Node} child Child to iterate.
@@ -41,10 +40,10 @@ function MathMLElementToJS(mmlElem, parent = "") {
         let childNodesInner = Array.from(child.childNodes);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
-        const val2 = MathMLElementToJS(elem2, 'msup');
+        const val2 = MathMLElementToJS(elem2, true);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
-        const val1 = MathMLElementToJS(elem1, 'msup');
+        const val1 = MathMLElementToJS(elem1, true);
         result += `(${val1} ** ${val2})`;
         break;
       }
@@ -52,28 +51,28 @@ function MathMLElementToJS(mmlElem, parent = "") {
         let childNodesInner = Array.from(child.childNodes);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
-        const val2 = MathMLElementToJS(elem2, 'mfrac');
+        const val2 = MathMLElementToJS(elem2, true);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
-        const val1 = MathMLElementToJS(elem1, 'mfrac');
+        const val1 = MathMLElementToJS(elem1, true);
         result += `(${val1} / ${val2})`;
         break;
       }
       case 'mrow':
-        result += `(${MathMLElementToJS(child, 'mrow')})`;
+        result += `(${MathMLElementToJS(child, false)})`;
         break;
       case 'msqrt': {
-        result += `Math.sqrt(${MathMLElementToJS(child, 'msqrt')})`;
+        result += `Math.sqrt(${MathMLElementToJS(child, false)})`;
         break;
       }
       case 'mroot': {
         let childNodesInner = Array.from(child.childNodes);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
-        const val2 = MathMLElementToJS(elem2, 'mroot');
+        const val2 = MathMLElementToJS(elem2, true);
         if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
-        const val1 = MathMLElementToJS(elem1, 'mroot');
+        const val1 = MathMLElementToJS(elem1, true);
         result += `(${val1} ** (1 / ${val2}))`;
         break;
       }
@@ -82,7 +81,7 @@ function MathMLElementToJS(mmlElem, parent = "") {
     }
   };
   const childNameOuter = mmlElem.nodeName.toLowerCase();
-  if (structElem.includes(childNameOuter) && !structElem.includes(parent) && !textElem.includes(parent)) {
+  if (structElem.includes(childNameOuter) && !contin) {
     const childNodes = Array.from(mmlElem.childNodes);
     childNodes.forEach(snippetToJS);
   } else {
