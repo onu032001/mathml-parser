@@ -7,115 +7,7 @@
     <script src=
         "https://cdn.plot.ly/plotly-latest.min.js">
     </script>
-    <script src=
-"https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js">
-    </script>
-    <script>
-function copyHTML(string) {
-  function listener(e) {
-    e.clipboardData.setData("text/html", str);
-    e.preventDefault();
-  }
-  document.addEventListener("copy", listener);
-  document.execCommand("copy");
-  document.removeEventListener("copy", listener);
-};
-
-/**
- * Parses MathML Element.
- * @param {MathMLElement} mmlElem MathML element parsed using MathML.
- */
-function MathMLElementToJS(mmlElem) {
-  let result = '';
-  /**
-   * Snippet to JavaScript.
-   * @param {Node} child Child to iterate.
-   */
-  const snippetToJS = (child) => {
-    if (child.nodeType === 3) return;
-    const childName = child.nodeName.toLowerCase();
-    switch (childName) {
-      case 'mn':
-        result += child.textContent;
-        break;
-      case 'mo':
-        if (child.form === 'infix' || child.form === 'postfix') {
-          result += child.textContent;
-        } else if (child.separator === 'true') {
-          result += child.textContent + ' ';
-        } else {
-          result += ` ${child.textContent} `;
-        }
-        break;
-      case 'mi':
-        if (child.textContent === 'π') {
-          result += 'Math.PI';
-        } else if (child.textContent === 'e') {
-          result += 'Math.E';
-        } else if (Math[child.textContent]) {
-          result += 'Math.' + child.textContent;
-        } else {
-          result += child.textContent;
-        }
-        break;
-      case 'msup': {
-        let childNodesForSup = Array.from(child.childNodes);
-        const check = () => {
-          if (childNodesForSup.at(-1).nodeType === 3) childNodesForSup.pop();
-        }
-        check();
-        const superscriptElem = childNodesForSup.pop();
-        const superscript = MathMLElementToJS(superscriptElem);
-        check();
-        const baseElem = childNodesForSup.pop();
-        const base = MathMLElementToJS(baseElem);
-        result += `${base} ** ${superscript}`;
-        break;
-      }
-      case 'mrow':
-        result += `(${MathMLElementToJS(child)})`;
-        break;
-      case 'msqrt': {
-        const sqrtInside = MathMLElementToJS(child);
-        result += `Math.sqrt(${sqrtInside})`;
-        break;
-      }
-      case 'mroot': {
-        let childNodesForRoot = Array.from(child.childNodes);
-        const check = () => {
-          if (childNodesForRoot.at(-1).nodeType === 3) childNodesForSup.pop();
-        }
-        check();
-        const indexElem = childNodesForRoot.pop();
-        const index = MathMLElementToJS(indexElem);
-        check();
-        const baseElem = childNodesForRoot.pop();
-        const base = MathMLElementToJS(baseElem);
-        result += `${base} ** (1 / ${index})`;
-      }
-      default:
-        break;
-    }
-  };
-  const childNameOuter = mmlElem.nodeName.toLowerCase();
-  if (['math', 'mrow', 'msqrt'].includes(childNameOuter)) {
-    const childNodes = Array.from(mmlElem.childNodes);
-    childNodes.forEach(snippetToJS);
-  } else {
-    snippetToJS(mmlElem);
-  }
-  return result;
-}
-function MathMLStringToJS(mml) {
-  const parser = new DOMParser();
-  let mmlElem = parser.parseFromString(mml, 'text/xml').documentElement;
-  const errorElement = mmlElem.querySelector('parsererror');
-  if (errorElement) {
-    throw new Error(errorElement.innerText);
-  }
-  return MathMLElementToJS(mmlElem);
-}
-    </script>
+    <script src="./mathml-parser.js"></script>
 
     <style>
         body {
@@ -124,7 +16,6 @@ function MathMLStringToJS(mml) {
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
         }
@@ -153,9 +44,6 @@ function MathMLStringToJS(mml) {
         }
 
         .input-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             margin-top: 20px;
         }
 
@@ -208,9 +96,10 @@ function MathMLStringToJS(mml) {
         <header>
             <h1>MathML Graph Plotter</h1>
             <div class="input-container">
-                <textarea id="mmlInput"></textarea>
+                <textarea id="mmlInput" style="width: 100%;"></textarea>
                 <button onclick="copyMml()">Copy MathML</button>
-                <div contenteditable="true" id="functionInput"></div.
+                <button onclick="convertMml()">Convert to MathML</button><br>
+                <div contenteditable="true" id="functionInput" style="width: 100%;"></div><br>
                 <button onclick="rewrite()">
                     Rewrite
                 </button>
@@ -228,6 +117,12 @@ function MathMLStringToJS(mml) {
         function copyMml() {
             const mmlInput = document.getElementById('mmlInput');
             copyHTML(mmlInput.value);
+        }
+        function convertMml() {
+            const mmlInput = document.getElementById('mmlInput');
+            const functionInput =
+                document.getElementById('functionInput');
+            functionInput.innerHTML = mmlInput.value;
         }
         function rewrite() {
             const functionInput =

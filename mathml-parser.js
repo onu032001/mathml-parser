@@ -4,6 +4,9 @@
  */
 function MathMLElementToJS(mmlElem) {
   let result = '';
+  const check = () => {
+    if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
+  }
   /**
    * Snippet to JavaScript.
    * @param {Node} child Child to iterate.
@@ -36,39 +39,44 @@ function MathMLElementToJS(mmlElem) {
         }
         break;
       case 'msup': {
-        let childNodesForSup = Array.from(child.childNodes);
-        const check = () => {
-          if (childNodesForSup.at(-1).nodeType === 3) childNodesForSup.pop();
-        }
+        let childNodesInner = Array.from(child.childNodes);
         check();
-        const superscriptElem = childNodesForSup.pop();
-        const superscript = MathMLElementToJS(superscriptElem);
+        const elem2 = childNodesInner.pop();
+        const val2 = MathMLElementToJS(elem2);
         check();
-        const baseElem = childNodesForSup.pop();
-        const base = MathMLElementToJS(baseElem);
-        result += `${base} ** ${superscript}`;
+        const elem1 = childNodesInner.pop();
+        const val1 = MathMLElementToJS(elem1);
+        result += `(${val1} ** ${val2})`;
+        break;
+      }
+      case 'mfrac': {
+        let childNodesInner = Array.from(child.childNodes);
+        check();
+        const elem2 = childNodesInner.pop();
+        const val2 = MathMLElementToJS(elem2);
+        check();
+        const elem1 = childNodesInner.pop();
+        const val1 = MathMLElementToJS(elem1);
+        result += `(${val1} / ${val2})`;
         break;
       }
       case 'mrow':
         result += `(${MathMLElementToJS(child)})`;
         break;
       case 'msqrt': {
-        const sqrtInside = MathMLElementToJS(child);
-        result += `Math.sqrt(${sqrtInside})`;
+        result += `Math.sqrt(${MathMLElementToJS(child)})`;
         break;
       }
       case 'mroot': {
-        let childNodesForRoot = Array.from(child.childNodes);
-        const check = () => {
-          if (childNodesForRoot.at(-1).nodeType === 3) childNodesForSup.pop();
-        }
+        let childNodesInner = Array.from(child.childNodes);
         check();
-        const indexElem = childNodesForRoot.pop();
-        const index = MathMLElementToJS(indexElem);
+        const elem2 = childNodesInner.pop();
+        const val2 = MathMLElementToJS(elem2);
         check();
-        const baseElem = childNodesForRoot.pop();
-        const base = MathMLElementToJS(baseElem);
-        result += `${base} ** (1 / ${index})`;
+        const elem1 = childNodesInner.pop();
+        const val1 = MathMLElementToJS(elem1);
+        result += `(${val1} ** (1 / ${val2}))`;
+        break;
       }
       default:
         break;
