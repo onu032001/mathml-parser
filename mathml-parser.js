@@ -80,7 +80,7 @@ function MathMLElementToJS(mmlElem) {
     }
   };
   const childNameOuter = mmlElem.nodeName.toLowerCase();
-  if (['math', 'mrow', 'msqrt'].includes(childNameOuter)) {
+  if (['math', 'msqrt'].includes(childNameOuter)) {
     const childNodes = Array.from(mmlElem.childNodes);
     childNodes.forEach(snippetToJS);
   } else {
