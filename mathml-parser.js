@@ -4,9 +4,6 @@
  */
 function MathMLElementToJS(mmlElem) {
   let result = '';
-  const check = () => {
-    if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
-  }
   /**
    * Snippet to JavaScript.
    * @param {Node} child Child to iterate.
@@ -40,10 +37,10 @@ function MathMLElementToJS(mmlElem) {
         break;
       case 'msup': {
         let childNodesInner = Array.from(child.childNodes);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
         const val2 = MathMLElementToJS(elem2);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
         const val1 = MathMLElementToJS(elem1);
         result += `(${val1} ** ${val2})`;
@@ -51,10 +48,10 @@ function MathMLElementToJS(mmlElem) {
       }
       case 'mfrac': {
         let childNodesInner = Array.from(child.childNodes);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
         const val2 = MathMLElementToJS(elem2);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
         const val1 = MathMLElementToJS(elem1);
         result += `(${val1} / ${val2})`;
@@ -69,10 +66,10 @@ function MathMLElementToJS(mmlElem) {
       }
       case 'mroot': {
         let childNodesInner = Array.from(child.childNodes);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem2 = childNodesInner.pop();
         const val2 = MathMLElementToJS(elem2);
-        check();
+        if (childNodesInner.at(-1).nodeType === 3) childNodesInner.pop();
         const elem1 = childNodesInner.pop();
         const val1 = MathMLElementToJS(elem1);
         result += `(${val1} ** (1 / ${val2}))`;
