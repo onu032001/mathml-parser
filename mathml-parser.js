@@ -92,20 +92,3 @@ function MathMLStringToJS(mml) {
   }
   return MathMLElementToJS(mmlElem);
 }
-let MathMLString =
-`<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msqrt>
-    <mn>2</mn>
-  </msqrt>
-  <mo>+</mo>
-  <msqrt>
-    <mn>3</mn>
-  </msqrt>
-  <mo>+</mo>
-  <msup>
-    <mi>e</mi>
-    <mi>x</mi>
-  </msup>
-</math>`;
-let JSResult = MathMLStringToJS(MathMLString);
-console.log(JSResult);
