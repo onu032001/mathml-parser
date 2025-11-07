@@ -37,9 +37,13 @@ function MathMLElementToJS(mmlElem) {
         break;
       case 'msup': {
         let childNodesForSup = Array.from(child.childNodes);
-        childNodesForSup.pop();
+        const check = () => {
+          if (childNodesForSup.at(-1).nodeType === 3) childNodesForSup.pop();
+        }
+        check();
         const superscriptElem = childNodesForSup.pop();
         const superscript = MathMLElementToJS(superscriptElem);
+        check();
         const baseElem = childNodesForSup.pop();
         const base = MathMLElementToJS(baseElem);
         result += `${base} ** ${superscript}`;
@@ -55,9 +59,13 @@ function MathMLElementToJS(mmlElem) {
       }
       case 'mroot': {
         let childNodesForRoot = Array.from(child.childNodes);
-        childNodesForRoot.pop();
+        const check = () => {
+          if (childNodesForRoot.at(-1).nodeType === 3) childNodesForSup.pop();
+        }
+        check();
         const indexElem = childNodesForRoot.pop();
         const index = MathMLElementToJS(indexElem);
+        check();
         const baseElem = childNodesForRoot.pop();
         const base = MathMLElementToJS(baseElem);
         result += `${base} ** (1 / ${index})`;
