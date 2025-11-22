@@ -4,7 +4,7 @@
  */
 function MathMLElementToJS(mmlElem, convertInsideNodes = false) {
   let JSConversionResult = '';
-  const inferredRowElements = ['math', 'mrow', 'msqrt'];
+  const inferredRowElements = ['math', 'mrow', 'msqrt', 'mfenced'];
   /**
    * Snippet to JavaScript.
    * @param {Node} child Child to iterate.
