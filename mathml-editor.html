@@ -55,9 +55,6 @@
             height: 200px;
             resize: vertical;
         }
-        .error {
-            color: var(--md-red-3);
-        }
     </style>
 </head>
 <body>
@@ -71,10 +68,6 @@
             <label for="result"><b>MathML Result:</b></label>
             <div id="result" class="math-container"></div>
         </div>
-        <div class="io-container">
-            <label for="jsResult"><b>MathML to JavaScript Expression:</b></label>
-            <div id="jsResult" class="math-container"></div>
-        </div>
     </div>
     <script>
         const MathMLInput = document.getElementById('MathMLInput');
@@ -83,18 +76,9 @@
         function renderMathML() {
             if (MathMLInput.value.trim() === '') {
                 result.innerHTML = 'Please enter some code.';
-                jsResult.classList.remove('error');
-                jsResult.innerHTML = 'Please enter some code.';
             } else {
                 const mmlCode = `<math display="block">${MathMLInput.value}</math>`;
                 result.innerHTML = mmlCode;
-                try {
-                    jsResult.classList.remove('error');
-                    jsResult.innerText = MathMLStringToJS(mmlCode);
-                } catch (error) {
-                    jsResult.classList.add('error');
-                    jsResult.innerText = error;
-                }
             }
         }
         MathMLInput.addEventListener('input', renderMathML);
