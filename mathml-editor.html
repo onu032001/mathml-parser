@@ -83,6 +83,7 @@
         function renderMathML() {
             if (MathMLInput.value.trim() === '') {
                 result.innerHTML = 'Please enter some code.';
+                jsResult.classList.remove('error');
                 jsResult.innerHTML = 'Please enter some code.';
             } else {
                 const mmlCode = `<math display="block">${MathMLInput.value}</math>`;
