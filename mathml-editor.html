@@ -100,13 +100,13 @@
          */
         function renderMathML() {
             // MathML 수식 계산 버튼을 초기화합니다.
-            computeAnchor.setAttribute('src', '');
+            computeAnchor.setAttribute('href', '');
             if (MathMLInput.value.trim() === '') {
                 result.innerHTML = 'MathML 요소 코드를 입력하세요.';
             } else {
                 const mmlCode = `<math display="block">${MathMLInput.value}</math>`;
                 result.innerHTML = mmlCode;
-                computeAnchor.setAttribute('src', getMathMLComp(mmlCode));
+                computeAnchor.setAttribute('href', getMathMLComp(mmlCode));
             }
         }
 
